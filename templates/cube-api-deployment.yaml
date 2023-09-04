@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cube-api
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.cubeApi.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      cubejsApp: cubeApi
+      {{- include "chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        cubejsApp: cubeApi
+        {{- include "chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: cubeapi-pv
+          persistentVolumeClaim:
+            claimName: cubeapi-pvc  
+      containers:
+        - env:
+          - name: CUBEJS_DB_TYPE
+            value: xxx
+          - name: CUBEJS_DEV_MODE
+            value: 'true'
+          - name: CUBEJS_DB_HOST
+            value: xxx
+          - name: CUBEJS_DB_NAME
+            value: xxx
+          - name: CUBEJS_DB_USER
+            value: xxx
+          - name: CUBEJS_DB_PASS
+            value: xxxx
+          - name: CUBEJS_DB_SSL
+            value: 'true'
+          - name: CUBEJS_DEFAULT_API_SCOPES
+            value: graphql,meta,data,jobs
+          - name: CUBEJS_CUBESTORE_HOST
+            value: cubestore-router   
+          - name: CUBEJS_API_SECRET
+            value: secret
+          - name: CUBEJS_LOG_LEVEL
+            value: trace    
+          name: {{ .Chart.Name }}
+          volumeMounts:
+            - mountPath: /cube/conf
+              name: cubeapi-pv
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.cubeApi.image }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.cubeApi.service.port }}
+              protocol: TCP
+          #livenessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: http
+          #readinessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

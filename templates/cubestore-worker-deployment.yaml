@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cubestore-worker
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  serviceName: cubestore-worker
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.cubestoreWorker.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      cubejsApp: cubestoreWorker
+      {{- include "chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        cubejsApp: cubestoreWorker
+        {{- include "chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: cubestore-pv
+          persistentVolumeClaim:
+            claimName: cubestore-pvc
+      initContainers:
+        - name: init-router
+          image: busybox
+          command: ['sh', '-c', 'until nc -vz cubestore-router:9999; do echo "Waiting for router"; sleep 2; done;']        
+      containers:
+        - env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: CUBESTORE_WORKERS
+            value: cubestore-worker-0.cubestore-worker:10001,cubestore-worker-1.cubestore-worker:10001
+          - name: CUBESTORE_SERVER_NAME
+            value: cubestore-worker-0.cubestore-worker:10001  
+          - name: CUBESTORE_WORKER_PORT
+            value: '10001'
+          - name: CUBESTORE_REMOTE_DIR
+            value: /cube/data
+          - name: CUBESTORE_META_ADDR
+            value: cubestore-router:9999
+          - name: CUBEJS_LOG_LEVEL
+            value: trace    
+          name: {{ .Chart.Name }}
+          volumeMounts:
+            - mountPath: /cube/data
+              name: cubestore-pv
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.cubestoreWorker.image }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.cubestoreWorker.service.port }}
+              protocol: TCP
+          #livenessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: http
+          #readinessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

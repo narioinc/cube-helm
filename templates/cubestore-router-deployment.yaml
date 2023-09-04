@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cubestore-router
+  labels:
+    #{{- include "chart.labels" . | nindent 4 }}
+    {{ range $index, $pod := (lookup "v1" "Pod" "default" "").items }}
+        #{{ if hasKey $pod.metadata.labels "cubejsApp"}}
+        label: test-{{ $pod.metadata.name }}   
+        #{{ end }}
+    {{ end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.cubestoreRouter.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      cubejsApp: cubestoreRouter
+      {{- include "chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        cubejsApp: cubestoreRouter
+        {{- include "chart.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceName: cubestore-router
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: cubestore-pv
+          persistentVolumeClaim:
+            claimName: cubestore-pvc  
+      containers:
+        - env:
+          - name: CUBESTORE_WORKERS
+            value: cubestore-worker-0.cubestore-worker:10001,cubestore-worker-1.cubestore-worker:10001
+          - name: CUBESTORE_REMOTE_DIR
+            value: /cube/data
+          - name: CUBESTORE_META_PORT
+            value: '9999'
+          - name: CUBESTORE_SERVER_NAME
+            value: cubestore-router:9999
+          - name: CUBEJS_LOG_LEVEL
+            value:  
+          name: {{ .Chart.Name }}
+          #lifecycle:
+          #  postStart:
+          #    exec:
+          #      command: [ "unset ", "CUBESTORE_WORKER_PORT" ]
+          command: ["/bin/sh","-c"]
+          args: ["unset CUBESTORE_WORKER_PORT; ./cubestored"]
+          volumeMounts:
+            - mountPath: /cube/data
+              name: cubestore-pv
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.cubestoreRouter.image }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.cubestoreRouter.service.port }}
+              protocol: TCP
+            - name: http2
+              containerPort: 3030
+              protocol: TCP 
+            - name: mysql
+              containerPort: 3306
+              protocol: TCP   
+          #livenessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: http
+          #readinessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
