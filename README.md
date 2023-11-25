@@ -19,7 +19,7 @@ The chart creates the following deployments with the associated services
 * Cubestore router
 * Cubestore worker
 
-The env variables are present in the respective deployment templates.
+The env variables are present in the respective sections in values.yaml.
 
  ## List of improvements
 
