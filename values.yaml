@@ -38,11 +38,12 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-# Environemt variables for cube APi and cubestore components
+# Environment variables for cube API and cubestore components
 # Please ensure that this section is edited in order to support the DB 
 # of your choice. 
 # Cube integrations page https://cube.dev/integrations provides the 
 # all the info needed to configure your datasources
+
 env:
   # this section is for the CUbe PAI deployment and the refresh worker
   # Keep in mind that the env var CUBEJS_REFRESH_WORKER to differentiate
