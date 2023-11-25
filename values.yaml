@@ -1,6 +1,7 @@
 # Default values for chart.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+intro: 1
 
 image:
   repository: cubejs/cube
@@ -61,7 +62,7 @@ env:
   - name: CUBEJS_DB_USER
     value: sakila
   - name: CUBEJS_DB_PASS
-    value: xxx
+    value: p_ssW0rd
   - name: CUBEJS_DB_SSL
     value: 'false'
   - name: CUBEJS_DEFAULT_API_SCOPES
@@ -78,8 +79,8 @@ env:
   # is explained here: https://cube.dev/docs/product/deployment#cube-store 
   # and the specific env vars that differentiate  are in the respectice deployment files
   cubestore:
-  - name: CUBESTORE_WORKERS
-    value: cubestore-worker-0.cubestore-worker:10001,cubestore-worker-1.cubestore-worker:10001\
+  #- name: CUBESTORE_WORKERS
+  #  value: cubestore-worker-0.cubestore-worker:10001,cubestore-worker-1.cubestore-worker:10001\
   - name: CUBESTORE_SERVER_NAME
     value: cubestore-router:9999
   - name: CUBESTORE_REMOTE_DIR

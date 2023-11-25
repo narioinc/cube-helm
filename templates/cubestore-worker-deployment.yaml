@@ -46,9 +46,13 @@ spec:
                 fieldPath: metadata.name
           {{- with .Values.env.cubestore }}
             {{- toYaml . | nindent 10 }}
-          {{- end }}      
+          {{- end }}
+          - name: CUBESTORE_WORKERS
+            value: {{ $count := .Values.cubestoreWorker.replicas | int }}{{- $networkAppPort  := .Values.cubestoreWorker.service.port -}}
+            {{- range until $count }}cubestore-worker-{{  .  }}.cubestore-worker:{{ $networkAppPort }},
+            {{- end }}      
           - name: CUBESTORE_WORKER_PORT
-            value: '10001'  
+            value: {{ quote .Values.cubestoreWorker.service.port}}  
           - name: CUBESTORE_META_ADDR
             value: cubestore-router:9999
           name: {{ .Chart.Name }}

@@ -41,24 +41,16 @@ spec:
             claimName: cubestore-pvc  
       containers:
         - env:
-          #- name: CUBESTORE_WORKERS
-          #  value: cubestore-worker-0.cubestore-worker:10001,cubestore-worker-1.cubestore-worker:10001\
-          #- name: CUBESTORE_SERVER_NAME
-          #  value: cubestore-router:9999
-          #- name: CUBESTORE_REMOTE_DIR
-          #  value: /cube/data
-          #- name: CUBEJS_LOG_LEVEL
-          #  value: trace
           {{- with .Values.env.cubestore }}
             {{- toYaml . | nindent 10 }}
           {{- end }}
           - name: CUBESTORE_META_PORT
-            value: '9999'
+            value: {{ quote .Values.cubestoreRouter.service.port}}
+          - name: CUBESTORE_WORKERS
+            value: {{ $count := .Values.cubestoreWorker.replicas | int }}{{- $networkAppPort  := .Values.cubestoreWorker.service.port -}}
+            {{- range until $count }}cubestore-worker-{{  .  }}.cubestore-worker:{{ $networkAppPort }},
+            {{- end }} 
           name: {{ .Chart.Name }}
-          #lifecycle:
-          #  postStart:
-          #    exec:
-          #      command: [ "unset ", "CUBESTORE_WORKER_PORT" ]
           command: ["/bin/sh","-c"]
           args: ["unset CUBESTORE_WORKER_PORT; ./cubestored"]
           volumeMounts:
