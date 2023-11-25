@@ -54,7 +54,7 @@ spec:
           - name: CUBESTORE_WORKER_PORT
             value: {{ quote .Values.cubestoreWorker.service.port}}  
           - name: CUBESTORE_META_ADDR
-            value: cubestore-router:9999
+            value: cubestore-router:{{ .Values.cubestoreRouter.service.port }}
           name: {{ .Chart.Name }}
           volumeMounts:
             - mountPath: /cube/data
