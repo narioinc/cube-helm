@@ -60,7 +60,7 @@ env:
   - name: CUBEJS_DB_USER
     value: sakila
   - name: CUBEJS_DB_PASS
-    value: p_ssW0rd
+    value: xxx
   - name: CUBEJS_DB_SSL
     value: 'false'
   - name: CUBEJS_DEFAULT_API_SCOPES
