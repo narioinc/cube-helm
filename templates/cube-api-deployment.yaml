@@ -34,29 +34,10 @@ spec:
           persistentVolumeClaim:
             claimName: cubeapi-pvc  
       containers:
-        - env:
-          - name: CUBEJS_DB_TYPE
-            value: xxx
-          - name: CUBEJS_DEV_MODE
-            value: 'true'
-          - name: CUBEJS_DB_HOST
-            value: xxx
-          - name: CUBEJS_DB_NAME
-            value: xxx
-          - name: CUBEJS_DB_USER
-            value: xxx
-          - name: CUBEJS_DB_PASS
-            value: xxxx
-          - name: CUBEJS_DB_SSL
-            value: 'true'
-          - name: CUBEJS_DEFAULT_API_SCOPES
-            value: graphql,meta,data,jobs
-          - name: CUBEJS_CUBESTORE_HOST
-            value: cubestore-router   
-          - name: CUBEJS_API_SECRET
-            value: secret
-          - name: CUBEJS_LOG_LEVEL
-            value: trace    
+        - env: 
+          {{- with .Values.env.cube }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}    
           name: {{ .Chart.Name }}
           volumeMounts:
             - mountPath: /cube/conf

@@ -41,16 +41,19 @@ spec:
             claimName: cubestore-pvc  
       containers:
         - env:
-          - name: CUBESTORE_WORKERS
-            value: cubestore-worker-0.cubestore-worker:10001,cubestore-worker-1.cubestore-worker:10001
-          - name: CUBESTORE_REMOTE_DIR
-            value: /cube/data
+          #- name: CUBESTORE_WORKERS
+          #  value: cubestore-worker-0.cubestore-worker:10001,cubestore-worker-1.cubestore-worker:10001\
+          #- name: CUBESTORE_SERVER_NAME
+          #  value: cubestore-router:9999
+          #- name: CUBESTORE_REMOTE_DIR
+          #  value: /cube/data
+          #- name: CUBEJS_LOG_LEVEL
+          #  value: trace
+          {{- with .Values.env.cubestore }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
           - name: CUBESTORE_META_PORT
             value: '9999'
-          - name: CUBESTORE_SERVER_NAME
-            value: cubestore-router:9999
-          - name: CUBEJS_LOG_LEVEL
-            value:  
           name: {{ .Chart.Name }}
           #lifecycle:
           #  postStart:

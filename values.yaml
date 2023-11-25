@@ -2,12 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-cubeReplicas:
-  cubeApi: 3
-  cubeRefreshWorker: 1
-  cubestoreRouter: 2
-  cubestoreWorker: 2
-
 image:
   repository: cubejs/cube
   pullPolicy: IfNotPresent
@@ -44,6 +38,56 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+# Environemt variables for cube APi and cubestore components
+# Please ensure that this section is edited in order to support the DB 
+# of your choice. 
+# Cube integrations page https://cube.dev/integrations provides the 
+# all the info needed to configure your datasources
+env:
+  # this section is for the CUbe PAI deployment and the refresh worker
+  # Keep in mind that the env var CUBEJS_REFRESH_WORKER to differentiate
+  # the refresh worker from the API node is inside the template as it is
+  # a mandatory env var for cube refresh worker role
+  cube:
+  - name: CUBEJS_DB_TYPE
+    value: mysql
+  - name: CUBEJS_DEV_MODE
+    value: 'true'
+  - name: CUBEJS_DB_HOST
+    value: mysql.default
+  - name: CUBEJS_DB_NAME
+    value: sakila
+  - name: CUBEJS_DB_USER
+    value: sakila
+  - name: CUBEJS_DB_PASS
+    value: p_ssW0rd
+  - name: CUBEJS_DB_SSL
+    value: 'false'
+  - name: CUBEJS_DEFAULT_API_SCOPES
+    value: graphql,meta,data,jobs
+  - name: CUBEJS_CUBESTORE_HOST
+    value: cubestore-router   
+  - name: CUBEJS_API_SECRET
+    value: secret
+  - name: CUBEJS_LOG_LEVEL
+    value: trace
+  
+  # Cubestore router and store worker env vars are as below
+  # keep in mind that the env vars that differentiate the router from the worker
+  # is explained here: https://cube.dev/docs/product/deployment#cube-store 
+  # and the specific env vars that differentiate  are in the respectice deployment files
+  cubestore:
+  - name: CUBESTORE_WORKERS
+    value: cubestore-worker-0.cubestore-worker:10001,cubestore-worker-1.cubestore-worker:10001\
+  - name: CUBESTORE_SERVER_NAME
+    value: cubestore-router:9999
+  - name: CUBESTORE_REMOTE_DIR
+    value: /cube/data
+  - name: CUBEJS_LOG_LEVEL
+    value: trace
+
+# Sections for each of the components of the cube cluster
+# Edit as per need.
 cubeApi:
   image: "cubejs/cube:latest"
   service:
