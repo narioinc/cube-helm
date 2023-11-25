@@ -79,8 +79,6 @@ env:
   # is explained here: https://cube.dev/docs/product/deployment#cube-store 
   # and the specific env vars that differentiate  are in the respectice deployment files
   cubestore:
-  #- name: CUBESTORE_WORKERS
-  #  value: cubestore-worker-0.cubestore-worker:10001,cubestore-worker-1.cubestore-worker:10001\
   - name: CUBESTORE_REMOTE_DIR
     value: /cube/data
   - name: CUBEJS_LOG_LEVEL
