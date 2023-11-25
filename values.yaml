@@ -46,7 +46,7 @@ securityContext: {}
 # all the info needed to configure your datasources
 
 env:
-  # this section is for the CUbe PAI deployment and the refresh worker
+  # this section is for the CUBE API deployment and the refresh worker
   # Keep in mind that the env var CUBEJS_REFRESH_WORKER to differentiate
   # the refresh worker from the API node is inside the template as it is
   # a mandatory env var for cube refresh worker role
