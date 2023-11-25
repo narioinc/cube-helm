@@ -1,5 +1,7 @@
 # cubejs-helm
-A helm chart to deploy cubejs in kubernetes
+A helm chart to deploy cubejs in kubernetes. This helm chart allows for deployment
+of cube components in a cluster mode instead of the single node test mode.
+All components are setup as per the docs here: https://cube.dev/docs/product/deployment
 
 ## Usage
 To use the chart, execute
