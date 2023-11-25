@@ -50,6 +50,8 @@ env:
   # Keep in mind that the env var CUBEJS_REFRESH_WORKER to differentiate
   # the refresh worker from the API node is inside the template as it is
   # a mandatory env var for cube refresh worker role
+  # the sample mysql used below uses the publicly available mysql container with the 
+  # sakila db pre-populated: https://github.com/sakiladb/mysql
   cube:
   - name: CUBEJS_DB_TYPE
     value: mysql
