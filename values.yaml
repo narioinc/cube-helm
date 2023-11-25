@@ -81,8 +81,6 @@ env:
   cubestore:
   #- name: CUBESTORE_WORKERS
   #  value: cubestore-worker-0.cubestore-worker:10001,cubestore-worker-1.cubestore-worker:10001\
-  - name: CUBESTORE_SERVER_NAME
-    value: cubestore-router:9999
   - name: CUBESTORE_REMOTE_DIR
     value: /cube/data
   - name: CUBEJS_LOG_LEVEL
@@ -96,7 +94,7 @@ cubeApi:
     type: ClusterIP
     port: 4000
     service_port: 4000
-  replicas: 3  
+  replicas: 1  
 
 cubeRefreshWorker:
   image: "cubejs/cube:latest"
@@ -112,7 +110,7 @@ cubestoreRouter:
     type: ClusterIP
     port: 9999
     service_port: 9999
-  replicas: 2    
+  replicas: 1    
 
 cubestoreWorker:
   image: "cubejs/cubestore:latest"   

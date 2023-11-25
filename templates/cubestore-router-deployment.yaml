@@ -41,6 +41,8 @@ spec:
             claimName: cubestore-pvc  
       containers:
         - env:
+          - name: CUBESTORE_SERVER_NAME
+            value: cubestore-router:{{.Values.cubestoreRouter.service.port}}
           {{- with .Values.env.cubestore }}
             {{- toYaml . | nindent 10 }}
           {{- end }}

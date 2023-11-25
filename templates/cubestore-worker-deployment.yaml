@@ -44,6 +44,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          - name: CUBESTORE_SERVER_NAME
+            value: $(POD_NAME).cubestore-worker:10001   
           {{- with .Values.env.cubestore }}
             {{- toYaml . | nindent 10 }}
           {{- end }}
