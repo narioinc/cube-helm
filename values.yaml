@@ -52,6 +52,10 @@ env:
   # a mandatory env var for cube refresh worker role
   # the sample mysql used below uses the publicly available mysql container with the 
   # sakila db pre-populated: https://github.com/sakiladb/mysql
+
+  # Please keep in mind that the db username and password SHOULD NOT BE EXPOSED
+  # IN PLAINTEXT AS BELOW. PLease use a vault service along with a k8s CSI driver to 
+  # mount the secrets as env vars in a end-to-end encrypted fashion. 
   cube:
   - name: CUBEJS_DB_TYPE
     value: mysql
