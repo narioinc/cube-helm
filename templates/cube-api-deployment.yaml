@@ -50,6 +50,9 @@ spec:
             - name: http
               containerPort: {{ .Values.cubeApi.service.port }}
               protocol: TCP
+            - name: pgsql
+              containerPort: 15432
+              protocol: TCP  
           #livenessProbe:
           #  httpGet:
           #    path: /
