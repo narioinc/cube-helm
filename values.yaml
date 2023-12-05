@@ -75,6 +75,8 @@ env:
     value: secret
   - name: CUBEJS_LOG_LEVEL
     value: trace
+  - name: CUBEJS_PG_SQL_PORT
+    value: '15432'  
   
   # Cubestore router and store worker env vars are as below
   # keep in mind that the env vars that differentiate the router from the worker
@@ -93,7 +95,7 @@ cubeApi:
   service:
     type: ClusterIP
     port: 4000
-    service_port: 4000
+    service_port: 4000  
   replicas: 1  
 
 cubeRefreshWorker:
