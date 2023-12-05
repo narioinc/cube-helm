@@ -11,8 +11,8 @@ spec:
       targetPort: {{ .Values.cubeApi.service.port }}
       protocol: TCP
       name: http
-    - port: 15432
-      targetPort: 15432
+    - port: {{ .Values.cubeApi.pgsql.port }}  
+      targetPort: {{ .Values.cubeApi.pgsql.port }}  
       protocol: TCP
       name: pgsql 
   selector:

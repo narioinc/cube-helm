@@ -37,7 +37,9 @@ spec:
         - env: 
           {{- with .Values.env.cube }}
             {{- toYaml . | nindent 10 }}
-          {{- end }}    
+          {{- end }}
+          - name: CUBEJS_PG_SQL_PORT
+            value: {{ .Values.cubeApi.pgsql.port }}    
           name: {{ .Chart.Name }}
           volumeMounts:
             - mountPath: /cube/conf
