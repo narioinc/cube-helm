@@ -99,7 +99,9 @@ cubeApi:
   service:
     type: ClusterIP
     port: 4000
-    service_port: 4000  
+    service_port: 4000
+  pgsql:
+    port: 15432      
   replicas: 1  
 
 cubeRefreshWorker:
